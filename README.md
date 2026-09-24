@@ -2,7 +2,9 @@
 
 An animated "entire digital presence" section for the Small Business page:
 brand, website, social, ads and search revealed around a central website in
-a seamless 15 second loop.
+a seamless 16 second loop: brand assembles in the centre, moves aside as the
+website opens from the centre, then Google search/Maps, Instagram and ads,
+ending on the full composition.
 
 ![Ecosystem frame](docs/frames/desktop-12-ecosystem.png)
 
@@ -49,8 +51,10 @@ with `loading="lazy"`.
 
 `showcase-motion.ts` holds every number: `TIMELINE` (entrances), `ADS_FAN`,
 `INNER` (grid, swatches, typing), `EXIT`, `CAPTIONS`, and `LAYOUTS`
-(desktop 1600x900 stage, mobile 900x1600 stage, camera paths). The camera's
-last stop equals its first, which is what makes the loop seamless.
+(desktop 1600x900 stage, mobile 900x1600 stage, `intro` centre positions
+for the brand pieces, camera paths). The camera's
+last stop equals its first and the loop starts and ends on an empty canvas,
+which is what makes it seamless.
 
 ## How it runs
 

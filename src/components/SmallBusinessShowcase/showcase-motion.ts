@@ -1,7 +1,7 @@
 /**
  * ANIMATION for the Small Business showcase.
  *
- * One 15 second timeline drives everything. It is compiled to plain CSS
+ * One 16 second timeline drives everything. It is compiled to plain CSS
  * @keyframes (transform, opacity, clip-path only) so the loop runs on the
  * compositor with no per-frame JavaScript and no React re-renders.
  *
@@ -15,7 +15,7 @@
 import type { PillarKey } from "./showcase-data";
 import { EASE_OUT } from "@/brand/tokens";
 
-export const LOOP = 15;
+export const LOOP = 16;
 
 export const EASE = {
   /** Art-directed entrances: fast start, long settle. Token from styles.css. */
@@ -33,12 +33,16 @@ export const EASE = {
 // ---------------------------------------------------------------------------
 
 export const SCENES = {
-  website: [0, 2.4],
-  brand: [2.4, 5.2],
-  social: [5.2, 8.0],
-  adsSearch: [8.0, 10.8],
-  ecosystem: [10.8, 13.3],
-  loop: [13.3, LOOP],
+  /** Brand system assembles in the centre of the canvas. */
+  brand: [0, 3.4],
+  /** Brand pieces travel to the left; the website opens from the centre. */
+  website: [3.4, 6.0],
+  search: [6.0, 8.2],
+  social: [8.2, 10.4],
+  ads: [10.4, 11.9],
+  ecosystem: [11.9, 14.6],
+  /** Everything clears; the loop restarts on an empty canvas. */
+  loop: [14.6, LOOP],
 } as const;
 
 export type ElementId =
@@ -65,60 +69,68 @@ type Cue = {
   /** Offset the element enters from, relative to its resting place. */
   from: Pose;
   /** Optional mask that opens with the entrance. */
-  clip?: "up" | "left" | "down";
+  clip?: "up" | "left" | "down" | "center";
 };
 
 export const TIMELINE = {
-  // Scene 2: brand. Logo first, then type, then color and collateral.
-  logo: { at: 2.5, dur: 1.3, from: { y: 28, s: 0.97 }, clip: "up" },
-  typePrimary: { at: 3.05, dur: 1.2, from: { x: -36 }, clip: "left" },
-  typeSecondary: { at: 3.4, dur: 1.1, from: { x: -28 } },
-  palette: { at: 3.75, dur: 1.1, from: { y: 20 } },
-  card: { at: 4.15, dur: 1.3, from: { y: 56, r: 3, s: 1.02 } },
+  // Scene 1: brand, assembled in the centre (see LAYOUTS[*].intro).
+  logo: { at: 0.4, dur: 1.3, from: { y: 28, s: 0.97 }, clip: "up" },
+  typePrimary: { at: 0.85, dur: 1.2, from: { x: -36 }, clip: "left" },
+  typeSecondary: { at: 1.15, dur: 1.1, from: { x: -28 } },
+  palette: { at: 1.45, dur: 1.1, from: { y: 20 } },
+  card: { at: 1.85, dur: 1.3, from: { y: 56, r: 3, s: 1.02 } },
 
-  // Scene 3: social. Phone rises, grid populates, posts slide out of it.
-  phone: { at: 5.5, dur: 1.4, from: { y: 110 } },
-  postA: { at: 6.85, dur: 1.2, from: { x: -80, s: 0.96 } },
-  postB: { at: 7.15, dur: 1.2, from: { x: -110, s: 0.96 } },
+  // Scene 2: website opens from the centre once the brand has moved aside.
+  website: { at: 4.2, dur: 1.5, from: { s: 0.9 }, clip: "center" },
 
-  // Scene 4: ads stack in, then fan (see ADS_FAN). Search follows.
-  ad0: { at: 8.05, dur: 0.9, from: { y: 90 } },
-  ad1: { at: 8.17, dur: 0.9, from: { y: 90 } },
-  ad2: { at: 8.29, dur: 0.9, from: { y: 90 } },
-  search: { at: 8.95, dur: 1.2, from: { y: 36 }, clip: "down" },
+  // Scene 3: Google search / Maps listing.
+  search: { at: 6.2, dur: 1.2, from: { y: 36 }, clip: "down" },
+
+  // Scene 4: Instagram. Phone rises, grid populates, posts slide out of it.
+  phone: { at: 8.3, dur: 1.4, from: { y: 110 } },
+  postA: { at: 9.55, dur: 1.2, from: { x: -80, s: 0.96 } },
+  postB: { at: 9.85, dur: 1.2, from: { x: -110, s: 0.96 } },
+
+  // Scene 5: ads stack in, then fan (see ADS_FAN).
+  ad0: { at: 10.45, dur: 0.9, from: { y: 90 } },
+  ad1: { at: 10.57, dur: 0.9, from: { y: 90 } },
+  ad2: { at: 10.69, dur: 0.9, from: { y: 90 } },
 } satisfies Partial<Record<ElementId, Cue>>;
 
+/** Brand pieces travel from their centre arrangement to their resting place. */
+export const BRAND_MOVE = { at: 3.3, dur: 1.3, stagger: 0.07 };
+
 /** Ads land stacked, then fan to their resting layout pose. */
-export const ADS_FAN = { at: 8.9, dur: 1.0, stagger: 0.06 };
+export const ADS_FAN = { at: 11.1, dur: 1.0, stagger: 0.06 };
 
 /** Inner sequences that play inside a revealed element. */
 export const INNER = {
-  swatches: { at: 3.95, stagger: 0.08, dur: 0.8 },
-  grid: { at: 6.05, stagger: 0.085, dur: 0.7 },
-  typing: { at: 9.4, dur: 0.7 },
-  searchRows: { at: 9.95, stagger: 0.12, dur: 0.8 },
+  swatches: { at: 1.65, stagger: 0.08, dur: 0.8 },
+  grid: { at: 8.85, stagger: 0.085, dur: 0.7 },
+  typing: { at: 6.65, dur: 0.7 },
+  searchRows: { at: 7.2, stagger: 0.12, dur: 0.8 },
 };
 
-/** Scene 6: everything drifts outward and fades while the camera pushes in. */
-export const EXIT = { at: 13.3, dur: 0.85, stagger: 0.035, distance: 90, scale: 0.97 };
+/** Scene 7: everything drifts outward and fades, website last. */
+export const EXIT = { at: 14.6, dur: 0.8, stagger: 0.035, distance: 90, scale: 0.97 };
 
 export const CAPTIONS = {
   /** "Your business, elevated." Visible at loop start AND end (seamless). */
-  opening: { outAt: 2.0, outDur: 0.6, inAt: 14.05, inDur: 0.8 },
+  opening: { outAt: 2.8, outDur: 0.6, inAt: 15.15, inDur: 0.75 },
   /** Closing headline over the full composition. */
-  closing: { at: 11.3, dur: 1.0, outAt: 13.2, outDur: 0.55 },
+  closing: { at: 12.5, dur: 1.0, outAt: 14.4, outDur: 0.55 },
   /** Highlight windows for the running index. Inactive labels sit at `dim`. */
   dim: 0.28,
   fade: 0.4,
   pillars: {
-    website: [[0, 2.4], [14.3, LOOP]],
-    brand: [[2.4, 5.2]],
-    social: [[5.2, 8.0]],
-    ads: [[8.0, 9.2]],
-    seo: [[9.2, 10.9]],
+    brand: [[0, 4.2], [15.5, LOOP]],
+    website: [[4.2, 6.0]],
+    seo: [[6.0, 8.2]],
+    social: [[8.2, 10.4]],
+    ads: [[10.4, 11.9]],
   } as Record<PillarKey, [number, number][]>,
   /** All labels at full strength over the ecosystem frame. */
-  allOn: [11.2, 13.4] as [number, number],
+  allOn: [12.2, 14.6] as [number, number],
 };
 
 // ---------------------------------------------------------------------------
@@ -143,14 +155,16 @@ export type Layout = {
   name: "desktop" | "mobile";
   stage: { w: number; h: number };
   boxes: Partial<Record<ElementId, Box>>;
+  /** Where brand pieces first assemble (top-left, stage units) before moving to `boxes`. */
+  intro: Partial<Record<ElementId, { x: number; y: number }>>;
   /** Camera path. Origin is the website centre. The final stop must equal the first. */
   camera: CameraStop[];
   captions: { opening: Box; closing: Box; pillars: Box; align: "left" | "right" };
 };
 
-const desktopCameraStart = { s: 1.8, x: 0, y: 40 };
-/** Mobile opens tight on the website's headline column, not the whole page. */
-const mobileCameraStart = { s: 2.0, x: 290, y: 245 };
+/** Loop start and end: close on the brand board in the centre. */
+const desktopCameraStart = { s: 1.2, x: 0, y: 20 };
+const mobileCameraStart = { s: 1.05, x: 0, y: -100 };
 
 export const LAYOUTS: Record<"desktop" | "mobile", Layout> = {
   desktop: {
@@ -171,18 +185,26 @@ export const LAYOUTS: Record<"desktop" | "mobile", Layout> = {
       ad2: { x: 1418, y: 494, w: 150, h: 196, r: 6, z: 19 },
       search: { x: 896, y: 628, w: 372, h: 150, z: 20 },
     },
+    intro: {
+      palette: { x: 560, y: 190 },
+      logo: { x: 560, y: 282 },
+      typePrimary: { x: 776, y: 282 },
+      typeSecondary: { x: 842, y: 498 },
+      card: { x: 560, y: 498 },
+    },
     camera: [
       { t: 0, ...desktopCameraStart },
-      { t: 0.45, ...desktopCameraStart },
-      { t: 2.6, s: 1.42, x: 0, y: 30 },
-      { t: 4.9, s: 1.16, x: 120, y: 40 },
-      { t: 5.4, s: 1.16, x: 120, y: 40 },
-      { t: 6.6, s: 1.14, x: -130, y: 30 },
-      { t: 8.0, s: 1.14, x: -130, y: 30 },
-      { t: 9.2, s: 1.1, x: -150, y: -24 },
-      { t: 10.8, s: 1.1, x: -150, y: -24 },
-      { t: 12.0, s: 1, x: 0, y: 0 },
-      { t: 13.3, s: 1, x: 0, y: 0 },
+      { t: 2.6, ...desktopCameraStart },
+      { t: 4.8, s: 1.14, x: 110, y: 40 },
+      { t: 6.0, s: 1.14, x: 110, y: 40 },
+      { t: 7.0, s: 1.14, x: -40, y: -50 },
+      { t: 8.2, s: 1.14, x: -40, y: -50 },
+      { t: 9.2, s: 1.14, x: -130, y: -40 },
+      { t: 10.4, s: 1.14, x: -130, y: -40 },
+      { t: 11.2, s: 1.1, x: -150, y: -10 },
+      { t: 11.9, s: 1.1, x: -150, y: -10 },
+      { t: 12.9, s: 1, x: 0, y: 0 },
+      { t: 14.7, s: 1, x: 0, y: 0 },
       { t: LOOP, ...desktopCameraStart },
     ],
     captions: {
@@ -204,24 +226,32 @@ export const LAYOUTS: Record<"desktop" | "mobile", Layout> = {
       website: { x: 70, y: 316, w: 760, h: 478, z: 10 },
       card: { x: 60, y: 752, w: 300, h: 172, r: -3, z: 15 },
       phone: { x: 560, y: 716, w: 270, h: 548, z: 16 },
-      postA: { x: 384, y: 820, w: 156, h: 196, z: 12 },
-      ad0: { x: 70, y: 1000, w: 176, h: 220, r: -6, z: 17 },
-      ad1: { x: 176, y: 1012, w: 176, h: 220, r: 0, z: 18 },
-      ad2: { x: 282, y: 1024, w: 176, h: 220, r: 6, z: 19 },
-      search: { x: 70, y: 1270, w: 470, h: 142, z: 20 },
+      postA: { x: 396, y: 800, w: 134, h: 164, z: 12 },
+      ad0: { x: 70, y: 1146, w: 176, h: 220, r: -6, z: 17 },
+      ad1: { x: 176, y: 1158, w: 176, h: 220, r: 0, z: 18 },
+      ad2: { x: 282, y: 1170, w: 176, h: 220, r: 6, z: 19 },
+      search: { x: 70, y: 972, w: 470, h: 142, z: 20 },
+    },
+    intro: {
+      logo: { x: 64, y: 700 },
+      typePrimary: { x: 268, y: 700 },
+      palette: { x: 582, y: 700 },
+      typeSecondary: { x: 582, y: 804 },
+      card: { x: 300, y: 910 },
     },
     camera: [
       { t: 0, ...mobileCameraStart },
-      { t: 0.45, ...mobileCameraStart },
-      { t: 2.6, s: 1.2, x: 0, y: 250 },
-      { t: 4.9, s: 1.08, x: 0, y: 260 },
-      { t: 5.4, s: 1.08, x: 0, y: 260 },
-      { t: 6.6, s: 1.08, x: 0, y: -10 },
-      { t: 8.0, s: 1.08, x: 0, y: -10 },
-      { t: 9.2, s: 1.08, x: 0, y: -110 },
-      { t: 10.8, s: 1.08, x: 0, y: -110 },
-      { t: 12.0, s: 1, x: 0, y: 0 },
-      { t: 13.3, s: 1, x: 0, y: 0 },
+      { t: 2.6, ...mobileCameraStart },
+      { t: 4.8, s: 1.08, x: 0, y: 260 },
+      { t: 6.0, s: 1.08, x: 0, y: 260 },
+      { t: 7.0, s: 1.08, x: 0, y: 100 },
+      { t: 8.2, s: 1.08, x: 0, y: 100 },
+      { t: 9.2, s: 1.08, x: 0, y: -10 },
+      { t: 10.4, s: 1.08, x: 0, y: -10 },
+      { t: 11.2, s: 1.08, x: 0, y: -160 },
+      { t: 11.9, s: 1.08, x: 0, y: -160 },
+      { t: 12.9, s: 1, x: 0, y: 0 },
+      { t: 14.7, s: 1, x: 0, y: 0 },
       { t: LOOP, ...mobileCameraStart },
     ],
     captions: {
@@ -266,21 +296,34 @@ const keyframes = (name: string, stops: Stop[]) => {
 };
 
 const CLIP = {
-  closed: { up: "inset(100% 0 0 0)", down: "inset(0 0 100% 0)", left: "inset(0 100% 0 0)" },
+  closed: { up: "inset(100% 0 0 0)", down: "inset(0 0 100% 0)", left: "inset(0 100% 0 0)", center: "inset(50% 50% 50% 50%)" },
   open: "inset(0 0 0 0)",
+  /** The website mask opens past its edges so its shadow is not clipped. */
+  openWide: "inset(-12% -12% -12% -12%)",
 };
 
 type Rule = { selector: string; base: string; stops: Stop[] };
 
-/** Peripheral element: enter, rest, drift outward on the loop push-in. */
-function revealStops(cue: Cue, rest: Pose, out: Pose, exitAt: number): Stop[] {
-  const from = offset(rest, cue.from, 0);
+/**
+ * Enter, rest, drift outward at the end of the loop. With `intro`, the element
+ * first lands at an intermediate pose and travels to rest at `moveAt`.
+ */
+function revealStops(cue: Cue, rest: Pose, out: Pose, exitAt: number, intro?: { pose: Pose; moveAt: number }): Stop[] {
+  const land = intro?.pose ?? rest;
+  const from = offset(land, cue.from, 0);
   const gone = offset(rest, out, 0);
   const end = cue.at + (cue.dur ?? 1.1);
+  const travel: Stop[] = intro
+    ? [
+        { t: intro.moveAt, css: poseCss(land), ease: EASE.camera },
+        { t: intro.moveAt + BRAND_MOVE.dur, css: poseCss(rest), ease: EASE.hold },
+      ]
+    : [];
   return [
     { t: 0, css: poseCss(from) },
     { t: cue.at, css: poseCss(from), ease: EASE.enter },
-    { t: end, css: poseCss(rest), ease: EASE.hold },
+    { t: end, css: poseCss(land), ease: EASE.hold },
+    ...travel,
     { t: exitAt, css: poseCss(rest), ease: EASE.exit },
     { t: exitAt + EXIT.dur, css: poseCss(gone) },
     { t: LOOP, css: poseCss(gone) },
@@ -297,9 +340,9 @@ function innerStops(at: number, dur: number, from: Pose): Stop[] {
   ];
 }
 
-function clipStops(at: number, dur: number, dir: keyof typeof CLIP.closed, ease: string = EASE.enter): Stop[] {
+function clipStops(at: number, dur: number, dir: keyof typeof CLIP.closed, ease: string = EASE.enter, openValue = CLIP.open): Stop[] {
   const closed = `clip-path:${CLIP.closed[dir]}`;
-  const open = `clip-path:${CLIP.open}`;
+  const open = `clip-path:${openValue}`;
   return [
     { t: 0, css: closed },
     { t: at, css: closed, ease },
@@ -366,9 +409,12 @@ function compileLayout(layout: Layout, gridCount: number, swatchCount: number, r
     })),
   });
 
-  // Peripheral elements, exit order by distance from the website.
+  // Elements. Exit order by distance from the website, so it leaves last.
   const focus = center(layout.boxes.website!);
-  const ids = (Object.keys(layout.boxes) as ElementId[]).filter((id) => id !== "website");
+  const ids = Object.keys(layout.boxes) as ElementId[];
+  const brandOrder = (Object.keys(layout.intro) as ElementId[]).sort(
+    (a, b) => ((TIMELINE as Record<string, Cue>)[a]?.at ?? 0) - ((TIMELINE as Record<string, Cue>)[b]?.at ?? 0),
+  );
   const byDistance = [...ids].sort(
     (a, b) =>
       Math.hypot(center(layout.boxes[b]!).x - focus.x, center(layout.boxes[b]!).y - focus.y) -
@@ -380,7 +426,7 @@ function compileLayout(layout: Layout, gridCount: number, swatchCount: number, r
     const cue = (TIMELINE as Record<string, Cue>)[id];
     if (!cue) continue;
     const exitAt = EXIT.at + byDistance.indexOf(id) * EXIT.stagger;
-    const out = outward(layout, box);
+    const out = id === "website" ? { s: EXIT.scale } : outward(layout, box);
     const isAd = (AD_IDS as readonly string[]).includes(id);
     const rest: Pose = { r: box.r ?? 0 };
 
@@ -406,14 +452,19 @@ function compileLayout(layout: Layout, gridCount: number, swatchCount: number, r
         ],
       });
     } else {
-      rules.push({ selector: sel(id), base: poseCss(rest), stops: revealStops(cue, rest, out, exitAt) });
+      const at = layout.intro[id];
+      const intro = at
+        ? { pose: { ...rest, x: at.x - box.x, y: at.y - box.y }, moveAt: BRAND_MOVE.at + brandOrder.indexOf(id) * BRAND_MOVE.stagger }
+        : undefined;
+      rules.push({ selector: sel(id), base: poseCss(rest), stops: revealStops(cue, rest, out, exitAt, intro) });
     }
 
     if (cue.clip) {
+      const openValue = cue.clip === "center" ? CLIP.openWide : CLIP.open;
       rules.push({
         selector: sel(`${id}-mask`),
-        base: `clip-path:${CLIP.open}`,
-        stops: clipStops(cue.at, (cue.dur ?? 1.1) * 0.95, cue.clip),
+        base: `clip-path:${openValue}`,
+        stops: clipStops(cue.at, (cue.dur ?? 1.1) * 0.95, cue.clip, EASE.enter, openValue),
       });
     }
   }

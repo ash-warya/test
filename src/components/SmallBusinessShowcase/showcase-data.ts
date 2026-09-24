@@ -61,9 +61,9 @@ export const showcaseContent = {
     pillars: [
       { key: "brand", label: "Brand" },
       { key: "website", label: "Website" },
+      { key: "seo", label: "SEO" },
       { key: "social", label: "Social" },
       { key: "ads", label: "Ads" },
-      { key: "seo", label: "SEO" },
     ] as { key: PillarKey; label: string }[],
   },
 

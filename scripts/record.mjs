@@ -11,7 +11,7 @@ const out = process.argv[3] ?? "videos";
 const ffmpeg = process.env.FFMPEG ?? "ffmpeg";
 const fps = Number(process.env.FPS ?? 30);
 const loops = Number(process.env.LOOPS ?? 2);
-const LOOP_MS = 15000;
+const LOOP_MS = 16000;
 const views = {
   desktop: { viewport: { width: 1600, height: 1000 }, scale: 1.25 },
   mobile: { viewport: { width: 390, height: 844 }, scale: 3 },

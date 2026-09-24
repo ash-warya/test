@@ -49,7 +49,11 @@ function Stage({ layout, c }: { layout: Layout; c: ShowcaseContent }) {
   const origin = `${u(site.x + site.w / 2)} ${u(site.y + site.h / 2)}`;
 
   const pieces: Partial<Record<ElementId, ReactNode>> = {
-    website: <WebsiteMock c={c} />,
+    website: (
+      <div data-sbs="website-mask" style={{ width: "100%", height: "100%" }}>
+        <WebsiteMock c={c} />
+      </div>
+    ),
     logo: <LogoCard c={c} />,
     typePrimary: <TypePrimaryCard c={c} />,
     typeSecondary: <TypeSecondaryCard c={c} />,
